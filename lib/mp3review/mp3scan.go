@@ -1,6 +1,6 @@
 // funcs implementing main special scanning function to find mp3s
 
-package mp3reviewer
+package mp3review
 
 import (
 	"path/filepath"

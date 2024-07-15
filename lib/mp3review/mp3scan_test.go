@@ -1,4 +1,4 @@
-package mp3reviewer
+package mp3review
 
 import (
 	"fmt"
