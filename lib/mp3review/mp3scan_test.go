@@ -11,7 +11,7 @@ import (
 
 func Test_shouldBeExcluded(t *testing.T) {
     something:=filepath.Join(
-        "E:\\mp3\\new\\2024-04-27",
+        "C:\\Users\\ktkm2\\Desktop\\song jobs\\2024-04-27",
         "**/*.mp3",
     )
 
@@ -40,7 +40,7 @@ func Test_shouldBeExcluded(t *testing.T) {
 }
 
 func Test_findMp3s(t *testing.T) {
-    result:=findMp3s("E:\\mp3\\new\\2024-04-27")
+    result:=findMp3s("C:/Users/ktkm2/Desktop/song jobs/2024-06-20")
 
     pp.Println(result)
 }
