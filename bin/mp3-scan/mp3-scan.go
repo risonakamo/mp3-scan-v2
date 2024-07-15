@@ -64,7 +64,14 @@ func main() {
 
 	// change current item to the next item. returns new state
 	app.Get("/next-item",func(c fiber.Ctx) error {
+		if currentFileIndex+1>=len(targetFiles) {
+			log.Warn().Msg("tried to go to next item, but would be invalid item")
+			currentFileIndex=len(targetFiles)
+			return c.SendStatus(fiber.StatusConflict)
+		}
+
 		currentFileIndex+=1
+
 		var result Mp3ReviewStatus=createCurrentState(targetFiles,currentFileIndex)
 
 		return c.JSON(result)
