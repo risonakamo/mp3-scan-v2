@@ -28,7 +28,7 @@ func main() {
 	var currentFileIndex int=0
 
 
-	log.Info().Msgf("initialised tracking %d items",len(targetFiles))
+	log.Info().Msgf("tracking %d items",len(targetFiles))
 
 	// --- fiber init
 	var app *fiber.App = fiber.New(fiber.Config{
