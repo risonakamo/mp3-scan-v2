@@ -19,6 +19,10 @@ func main() {
 	// --- end config
 
 
+	// --- auto vars
+	var here string=utils.GetHereDirExe()
+
+
 	// --- state initialise
 	var targetFiles []string=getTargetFiles(targetDir)
 	var currentFileIndex int=0
@@ -79,7 +83,17 @@ func main() {
 
 
 
+	// --- static
+	app.Static("/",filepath.Join(here,"mp3-scan-v2-web/build"))
+
+
 	// --- run
+    var e error=utils.OpenTargetWithDefaultProgram("http://localhost:4200")
+
+    if e!=nil {
+        log.Err(e).Msg("failed to open webpage with default program")
+    }
+
 	app.Listen(":4200")
 }
 
