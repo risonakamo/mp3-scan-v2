@@ -10,7 +10,7 @@ import (
 )
 
 // find all mp3s while applying special rules (see should be excluded)
-func findMp3s(topDir string) []string {
+func FindMp3s(topDir string) []string {
     var targetFiles []string
     var e error
     targetFiles,e=doublestar.FilepathGlob(filepath.Join(
