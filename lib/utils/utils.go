@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"math/rand/v2"
 	"os"
 	"os/exec"
@@ -29,7 +28,6 @@ func ShuffleArray[T any](array []T) {
 // try to open web url or file with default program.
 // essentially runs program like it was double clicked
 func OpenTargetWithDefaultProgram(url string) error {
-    fmt.Println("huh",fmt.Sprintf("\"%s\"",url))
     var cmd *exec.Cmd=exec.Command(
         "cmd","/c","start",
         "",

@@ -38,6 +38,7 @@ func main() {
 			fmt.Println(err)
 			return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 		},
+
 	})
 
 
@@ -94,7 +95,9 @@ func main() {
         log.Err(e).Msg("failed to open webpage with default program")
     }
 
-	app.Listen(":4200")
+	app.Listen(":4200",fiber.ListenConfig{
+		DisableStartupMessage: true,
+	})
 }
 
 // status to give to frontend
