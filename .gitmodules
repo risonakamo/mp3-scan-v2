@@ -1,0 +1,3 @@
+[submodule "mp3-scan-v2-web"]
+	path = mp3-scan-v2-web
+	url = ./mp3-scan-v2-web
