@@ -2,10 +2,12 @@
 - [x] "next item" needs to be in disabled state until decision is locked in
 - [x] folder needs to be populated
 - [x] implement move item into folder func
-- [ ] reorganise server to use class for state management
+- [x] reorganise server to use class for state management
 - [ ] performs moving
     - [ ] api to move the current item and move to the next item
     - [ ] either replace current next item or change to skip item. or have the next item able to skip as well?
+- [ ] show error somewhere when failed to do something
+- [ ] on successfully changing item, need to reset the decision
 
 # 2
 - [ ] progress meter functionality

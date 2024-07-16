@@ -78,11 +78,14 @@ func (state *Mp3ScanState) AdvanceItem() Mp3ReviewStatus {
 }
 
 // perform decision on the current item, if there is one, and advance to the next
-// item. returns new state. if there is no item, does nothing
+// item. returns new state. if there is no item, does nothing.
+// if failed to move item, does not advance
 func (state *Mp3ScanState) DecideItem(decision Mp3Decision) Mp3ReviewStatus {
     if state.NoMoreItems() {
         return state.GetStatus()
     }
+
+    log.Info().Msgf("moving item: %s",state.items[state.currentItemI])
 
     var e error=DoItemDecision(
         state.items[state.currentItemI],
@@ -90,7 +93,8 @@ func (state *Mp3ScanState) DecideItem(decision Mp3Decision) Mp3ReviewStatus {
     )
 
     if e!=nil {
-        panic(e)
+        log.Err(e).Msg("failed to move item")
+        return state.GetStatus()
     }
 
     return state.AdvanceItem()
