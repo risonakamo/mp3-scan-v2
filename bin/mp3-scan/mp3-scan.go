@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"mp3s-reviewer/lib/mp3review"
 	"mp3s-reviewer/lib/utils"
@@ -78,7 +79,8 @@ func main() {
 	app.Post("/decide-item",func(c fiber.Ctx) error {
 		if state.NoMoreItems() {
 			log.Warn().Msg("tried to perform decide item when out of items")
-			return c.SendStatus(fiber.StatusConflict)
+			c.Status(fiber.StatusConflict)
+			return c.SendString("no more items")
 		}
 
 		var decisionReq ItemDecisionRequest
@@ -88,7 +90,17 @@ func main() {
 			panic(e)
 		}
 
-		var newstatus mp3review.Mp3ReviewStatus=state.DecideItem(decisionReq.Decision)
+		var newstatus mp3review.Mp3ReviewStatus
+		newstatus,e=state.DecideItem(decisionReq.Decision)
+
+		if e!=nil {
+			if errors.Is(e,mp3review.Mp3ScanStateError_failedToMove) {
+				c.Status(fiber.StatusConflict)
+				return c.SendString("failed to move")
+			}
+
+			panic(e)
+		}
 
 		return c.JSON(newstatus)
 	})

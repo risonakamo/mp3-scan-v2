@@ -55,7 +55,7 @@ func shouldBeExcluded(file string) bool {
     var pathPiece string
     for _,pathPiece = range splitPath {
         switch pathPiece {
-            case "y","n","m","done":
+            case "y","n","m","done","yes","no","maybe":
             return true
         }
     }

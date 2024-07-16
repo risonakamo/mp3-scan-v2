@@ -3,11 +3,11 @@
 - [x] folder needs to be populated
 - [x] implement move item into folder func
 - [x] reorganise server to use class for state management
-- [ ] performs moving
-    - [ ] api to move the current item and move to the next item
-    - [ ] either replace current next item or change to skip item. or have the next item able to skip as well?
+- [x] performs moving
+    - [x] api to move the current item and move to the next item
+    - [x] either replace current next item or change to skip item. or have the next item able to skip as well?
 - [ ] show error somewhere when failed to do something
-- [ ] on successfully changing item, need to reset the decision
+- [x] on successfully changing item, need to reset the decision
 
 # 2
 - [ ] progress meter functionality
@@ -16,6 +16,11 @@
 - [ ] keyboard shortcuts
 - [ ] skip item
 - [ ] maybe mode
+- [ ] tscheck in terminal not detecting ts errors, but vscode is detecting it
+
+# 3
+- [ ] also detect all the items in y/n/m and add it to the progress number (but they are non-interactable except in maybe mode)
+- [ ] flashing on page load due to delay in getting state
 
 # when back online
 - [ ] switch to lodash

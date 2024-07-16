@@ -3,6 +3,7 @@
 package mp3review
 
 import (
+	"errors"
 	"mp3s-reviewer/lib/utils"
 	"path/filepath"
 
@@ -28,6 +29,12 @@ type Mp3ReviewStatus struct {
 
 	NoMoreItems bool `json:"noMoreItems"`
 }
+
+type Mp3ScanStateError error
+var (
+    Mp3ScanStateError_noitems Mp3ScanStateError=errors.New("no more items")
+    Mp3ScanStateError_failedToMove Mp3ScanStateError=errors.New("failed to move item")
+)
 
 // create new scan state on a target dir
 func NewScanState(targetDir string) Mp3ScanState {
@@ -80,9 +87,9 @@ func (state *Mp3ScanState) AdvanceItem() Mp3ReviewStatus {
 // perform decision on the current item, if there is one, and advance to the next
 // item. returns new state. if there is no item, does nothing.
 // if failed to move item, does not advance
-func (state *Mp3ScanState) DecideItem(decision Mp3Decision) Mp3ReviewStatus {
+func (state *Mp3ScanState) DecideItem(decision Mp3Decision) (Mp3ReviewStatus,error) {
     if state.NoMoreItems() {
-        return state.GetStatus()
+        return state.GetStatus(),Mp3ScanStateError_noitems
     }
 
     log.Info().Msgf("moving item: %s",state.items[state.currentItemI])
@@ -94,10 +101,10 @@ func (state *Mp3ScanState) DecideItem(decision Mp3Decision) Mp3ReviewStatus {
 
     if e!=nil {
         log.Err(e).Msg("failed to move item")
-        return state.GetStatus()
+        return state.GetStatus(),Mp3ScanStateError_failedToMove
     }
 
-    return state.AdvanceItem()
+    return state.AdvanceItem(),nil
 }
 
 // return if no more items
