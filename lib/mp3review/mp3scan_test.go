@@ -40,7 +40,7 @@ func Test_shouldBeExcluded(t *testing.T) {
 }
 
 func Test_findMp3s(t *testing.T) {
-    result:=findMp3s("C:/Users/ktkm2/Desktop/song jobs/2024-06-20")
+    result:=FindMp3s("C:/Users/ktkm2/Desktop/song jobs/2024-06-20")
 
     pp.Println(result)
 }
