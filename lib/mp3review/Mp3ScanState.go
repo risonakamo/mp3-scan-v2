@@ -3,9 +3,13 @@
 package mp3review
 
 import (
+	"mp3s-reviewer/lib/utils"
 	"path/filepath"
+
+	"github.com/rs/zerolog/log"
 )
 
+// mp3 scanner bin state holding class
 type Mp3ScanState struct {
     // list of paths of items
     items []string
@@ -27,7 +31,11 @@ type Mp3ReviewStatus struct {
 
 // create new scan state on a target dir
 func NewScanState(targetDir string) Mp3ScanState {
+    log.Info().Msgf("scanning: %s",targetDir)
+
     var targetFiles []string=findMp3sShuffled(targetDir)
+
+    log.Info().Msgf("initialised: tracking %d items",len(targetFiles))
 
     return Mp3ScanState{
         items: targetFiles,
@@ -37,7 +45,7 @@ func NewScanState(targetDir string) Mp3ScanState {
 
 // get current status. returns weird looking one if no more items
 func (state *Mp3ScanState) GetStatus() Mp3ReviewStatus {
-    if state.currentItemI>=len(state.items) {
+    if state.NoMoreItems() {
         return Mp3ReviewStatus{
             CurrentItem: "",
             CurrentItemFolder: "",
@@ -59,7 +67,7 @@ func (state *Mp3ScanState) GetStatus() Mp3ReviewStatus {
 // advance to the next item, and return the next state. index will not grow
 // larger than the size of the items (being at the size of items means there
 // is no more items, though)
-func (state *Mp3ScanState) advanceItem() Mp3ReviewStatus {
+func (state *Mp3ScanState) AdvanceItem() Mp3ReviewStatus {
     state.currentItemI+=1
 
     if state.currentItemI>len(state.items) {
@@ -71,8 +79,8 @@ func (state *Mp3ScanState) advanceItem() Mp3ReviewStatus {
 
 // perform decision on the current item, if there is one, and advance to the next
 // item. returns new state. if there is no item, does nothing
-func (state *Mp3ScanState) decideItem(decision Mp3Decision) Mp3ReviewStatus {
-    if state.currentItemI>=len(state.items) {
+func (state *Mp3ScanState) DecideItem(decision Mp3Decision) Mp3ReviewStatus {
+    if state.NoMoreItems() {
         return state.GetStatus()
     }
 
@@ -85,5 +93,20 @@ func (state *Mp3ScanState) decideItem(decision Mp3Decision) Mp3ReviewStatus {
         panic(e)
     }
 
-    return state.advanceItem()
+    return state.AdvanceItem()
+}
+
+// return if no more items
+func (state *Mp3ScanState) NoMoreItems() bool {
+    return state.currentItemI>=len(state.items)
+}
+
+// try to open the current item, if any
+func (state *Mp3ScanState) OpenItem() {
+    if state.NoMoreItems() {
+        return
+    }
+
+    log.Info().Msgf("opening item: %s",state.items[state.currentItemI])
+    utils.OpenTargetWithDefaultProgram(state.items[state.currentItemI])
 }

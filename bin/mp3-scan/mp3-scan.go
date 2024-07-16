@@ -24,11 +24,9 @@ func main() {
 
 
 	// --- state initialise
-	var targetFiles []string=getTargetFiles(targetDir)
-	var currentFileIndex int=0
+	var state mp3review.Mp3ScanState=mp3review.NewScanState(targetDir)
 
 
-	log.Info().Msgf("tracking %d items",len(targetFiles))
 
 	// --- fiber init
 	var app *fiber.App = fiber.New(fiber.Config{
@@ -47,43 +45,38 @@ func main() {
 	// --- routes
 	// get current status information
 	app.Get("/get-status",func(c fiber.Ctx) error {
-		var response Mp3ReviewStatus=createCurrentState(targetFiles,currentFileIndex)
+		var response mp3review.Mp3ReviewStatus=state.GetStatus()
 
 		return c.JSON(response)
 	})
 
 	// open the current item, or nothing if ended
 	app.Get("/open-item",func(c fiber.Ctx) error {
-		if currentFileIndex>=len(targetFiles) {
+		if state.NoMoreItems() {
 			log.Warn().Msg("tried to open item when already ended")
 			return c.SendStatus(fiber.StatusConflict)
 		}
 
-		var currentItem string=targetFiles[currentFileIndex]
-
-		log.Info().Msgf("opening item: %s",currentItem)
-		utils.OpenTargetWithDefaultProgram(currentItem)
+		state.OpenItem()
 
 		return c.SendStatus(fiber.StatusOK)
 	})
 
 	// change current item to the next item. returns new state
 	app.Get("/next-item",func(c fiber.Ctx) error {
-		if currentFileIndex+1>=len(targetFiles) {
+		if state.NoMoreItems() {
 			log.Warn().Msg("tried to go to next item, but would be invalid item")
-			currentFileIndex=len(targetFiles)
 			return c.SendStatus(fiber.StatusConflict)
 		}
 
-		currentFileIndex+=1
+		var newStatus mp3review.Mp3ReviewStatus=state.AdvanceItem()
 
-		var result Mp3ReviewStatus=createCurrentState(targetFiles,currentFileIndex)
-
-		return c.JSON(result)
+		return c.JSON(newStatus)
 	})
 
+	// make decision on current item, and move to next item
 	app.Post("/decide-item",func(c fiber.Ctx) error {
-		if currentFileIndex>=len(targetFiles) {
+		if state.NoMoreItems() {
 			log.Warn().Msg("tried to perform decide item when out of items")
 			return c.SendStatus(fiber.StatusConflict)
 		}
@@ -95,17 +88,9 @@ func main() {
 			panic(e)
 		}
 
-		e=mp3review.DoItemDecision(
-			targetFiles[currentFileIndex],
-			decisionReq.Decision,
-		)
+		var newstatus mp3review.Mp3ReviewStatus=state.DecideItem(decisionReq.Decision)
 
-		if e!=nil {
-			panic(e)
-		}
-
-		// <advance state>
-		// <construct and return current state>
+		return c.JSON(newstatus)
 	})
 
 
@@ -127,36 +112,7 @@ func main() {
 }
 
 
-
-
-// status to give to frontend
-type Mp3ReviewStatus struct {
-	CurrentItem string `json:"currentItem"`
-	CurrentItemFolder string `json:"currentItemFolder"`
-	TotalItems int `json:"totalItems"`
-	CurrentItemIndex int `json:"currentItemIndex"`
-	NoMoreItems bool `json:"noMoreItems"`
-}
-
 // request from frontend to decide on current item
 type ItemDecisionRequest struct {
 	Decision mp3review.Mp3Decision `json:"decision"`
-}
-
-// uses find mp3s to find mp3s. shuffles and returns result
-func getTargetFiles(targetDir string) []string {
-	var foundFiles []string=mp3review.FindMp3s(targetDir)
-	utils.ShuffleArray(foundFiles)
-
-	return foundFiles
-}
-
-// create review status struct
-func createCurrentState(files []string,currentIndex int) Mp3ReviewStatus {
-	return Mp3ReviewStatus{
-		CurrentItem: filepath.Base(files[currentIndex]),
-		CurrentItemFolder: filepath.Base(filepath.Dir(files[currentIndex])),
-		TotalItems: len(files),
-		CurrentItemIndex: currentIndex,
-	}
 }
