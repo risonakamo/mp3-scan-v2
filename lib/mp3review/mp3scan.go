@@ -3,6 +3,7 @@
 package mp3review
 
 import (
+	"mp3s-reviewer/lib/utils"
 	"path/filepath"
 	"strings"
 
@@ -60,4 +61,12 @@ func shouldBeExcluded(file string) bool {
     }
 
     return false
+}
+
+// uses find mp3s to find mp3s. shuffles and returns result
+func findMp3sShuffled(targetDir string) []string {
+	var foundFiles []string=FindMp3s(targetDir)
+	utils.ShuffleArray(foundFiles)
+
+	return foundFiles
 }
