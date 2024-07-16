@@ -6,7 +6,7 @@
 - [x] performs moving
     - [x] api to move the current item and move to the next item
     - [x] either replace current next item or change to skip item. or have the next item able to skip as well?
-- [ ] show error somewhere when failed to do something
+- [x] show error somewhere when failed to do something
 - [x] on successfully changing item, need to reset the decision
 
 # 2
