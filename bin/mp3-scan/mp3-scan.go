@@ -103,6 +103,7 @@ func main() {
 // status to give to frontend
 type Mp3ReviewStatus struct {
 	CurrentItem string `json:"currentItem"`
+	CurrentItemFolder string `json:"currentItemFolder"`
 	TotalItems int `json:"totalItems"`
 	CurrentItemIndex int `json:"currentItemIndex"`
 }
@@ -119,6 +120,7 @@ func getTargetFiles(targetDir string) []string {
 func createCurrentState(files []string,currentIndex int) Mp3ReviewStatus {
 	return Mp3ReviewStatus{
 		CurrentItem: filepath.Base(files[currentIndex]),
+		CurrentItemFolder: filepath.Base(filepath.Dir(files[currentIndex])),
 		TotalItems: len(files),
 		CurrentItemIndex: currentIndex,
 	}
