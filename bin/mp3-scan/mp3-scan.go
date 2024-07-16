@@ -82,6 +82,32 @@ func main() {
 		return c.JSON(result)
 	})
 
+	app.Post("/decide-item",func(c fiber.Ctx) error {
+		if currentFileIndex>=len(targetFiles) {
+			log.Warn().Msg("tried to perform decide item when out of items")
+			return c.SendStatus(fiber.StatusConflict)
+		}
+
+		var decisionReq ItemDecisionRequest
+		var e error=c.Bind().JSON(&decisionReq)
+
+		if e!=nil {
+			panic(e)
+		}
+
+		e=mp3review.DoItemDecision(
+			targetFiles[currentFileIndex],
+			decisionReq.Decision,
+		)
+
+		if e!=nil {
+			panic(e)
+		}
+
+		// <advance state>
+		// <construct and return current state>
+	})
+
 
 
 	// --- static
@@ -100,12 +126,21 @@ func main() {
 	})
 }
 
+
+
+
 // status to give to frontend
 type Mp3ReviewStatus struct {
 	CurrentItem string `json:"currentItem"`
 	CurrentItemFolder string `json:"currentItemFolder"`
 	TotalItems int `json:"totalItems"`
 	CurrentItemIndex int `json:"currentItemIndex"`
+	NoMoreItems bool `json:"noMoreItems"`
+}
+
+// request from frontend to decide on current item
+type ItemDecisionRequest struct {
+	Decision mp3review.Mp3Decision `json:"decision"`
 }
 
 // uses find mp3s to find mp3s. shuffles and returns result
