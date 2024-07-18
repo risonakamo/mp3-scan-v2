@@ -16,7 +16,8 @@ const (
     Mp3Decision_maybe="maybe"
 )
 
-// more scoped version of move item into dir. only takes the valid decision types
+// more scoped version of move item into dir. only takes the valid decision types.
+// if the target item's current dir is one of the special dirs, moves up 2 levels.
 func DoItemDecision(targetItem string,decision Mp3Decision) error {
     if !checkMp3Decision(decision) {
         return errors.New("invalid decision type")

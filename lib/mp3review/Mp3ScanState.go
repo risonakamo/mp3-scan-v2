@@ -22,6 +22,8 @@ type Mp3ScanState struct {
 // constructed status view of the state
 type Mp3ReviewStatus struct {
 	CurrentItem string `json:"currentItem"`
+    // folder of the item. if the item is in one of the special folders, gives the parent of that folder
+    // instead
 	CurrentItemFolder string `json:"currentItemFolder"`
 
 	TotalItems int `json:"totalItems"`
