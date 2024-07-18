@@ -11,7 +11,7 @@ import (
 )
 
 // find all mp3s while applying special rules (see should be excluded)
-func FindMp3s(topDir string) []string {
+func FindMp3s(topDir string,includeMaybes bool) []string {
     var targetFiles []string
     var e error
     targetFiles,e=doublestar.FilepathGlob(filepath.Join(
@@ -26,7 +26,7 @@ func FindMp3s(topDir string) []string {
     var goodFiles []string
     var file string
     for _,file = range targetFiles {
-        if !shouldBeExcluded(file) {
+        if !shouldBeExcluded(file,includeMaybes) {
             goodFiles=append(goodFiles,file)
         }
     }
@@ -41,8 +41,12 @@ func FindMp3s(topDir string) []string {
 // file should be ignored if:
 // - not an mp3 file
 // - anywhere in the path, it is under a folder called:
-//   - done, y, m, n
-func shouldBeExcluded(file string) bool {
+//   - done, y, m, n, yes, no, maybe
+// if include maybe enabled, will
+func shouldBeExcluded(
+    file string,
+    includeMaybe bool,
+) bool {
     if !strings.HasSuffix(strings.ToLower(file),".mp3") {
         return true
     }
@@ -54,9 +58,16 @@ func shouldBeExcluded(file string) bool {
 
     var pathPiece string
     for _,pathPiece = range splitPath {
-        switch pathPiece {
-            case "y","n","m","done","yes","no","maybe":
-            return true
+        if !includeMaybe {
+            switch pathPiece {
+                case "y","n","m","done","yes","no","maybe":
+                return true
+            }
+        } else {
+            switch pathPiece {
+                case "y","n","done","yes","no":
+                return true
+            }
         }
     }
 
@@ -64,8 +75,8 @@ func shouldBeExcluded(file string) bool {
 }
 
 // uses find mp3s to find mp3s. shuffles and returns result
-func findMp3sShuffled(targetDir string) []string {
-	var foundFiles []string=FindMp3s(targetDir)
+func findMp3sShuffled(targetDir string,includeMaybes bool) []string {
+	var foundFiles []string=FindMp3s(targetDir,includeMaybes)
 	utils.ShuffleArray(foundFiles)
 
 	return foundFiles

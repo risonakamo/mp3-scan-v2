@@ -37,10 +37,10 @@ var (
 )
 
 // create new scan state on a target dir
-func NewScanState(targetDir string) Mp3ScanState {
+func NewScanState(targetDir string,includeMaybes bool) Mp3ScanState {
     log.Info().Msgf("scanning: %s",targetDir)
 
-    var targetFiles []string=findMp3sShuffled(targetDir)
+    var targetFiles []string=findMp3sShuffled(targetDir,includeMaybes)
 
     log.Info().Msgf("initialised: tracking %d items",len(targetFiles))
 

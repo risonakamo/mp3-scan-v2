@@ -16,7 +16,7 @@ func main() {
 
 	// --- config
 	var targetDir string="C:/Users/ktkm2/Desktop/song jobs/2024-06-20"
-	// var maybeMode bool=false
+	var maybeMode bool=true
 	// --- end config
 
 
@@ -25,7 +25,7 @@ func main() {
 
 
 	// --- state initialise
-	var state mp3review.Mp3ScanState=mp3review.NewScanState(targetDir)
+	var state mp3review.Mp3ScanState=mp3review.NewScanState(targetDir,maybeMode)
 
 
 
