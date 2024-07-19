@@ -4,33 +4,45 @@ package mp3review
 
 import (
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/rs/zerolog/log"
 )
 
-// possible mp3 decisions
-type Mp3Decision string
-const (
-    Mp3Decision_yes="yes"
-    Mp3Decision_no="no"
-    Mp3Decision_maybe="maybe"
-)
-
-// more scoped version of move item into dir. only takes the valid decision types.
+// more scoped version of move item into dir. only takes the valid special dir types.
 // if the target item's current dir is one of the special dirs, moves up 2 levels.
-func DoItemDecision(targetItem string,decision Mp3Decision) error {
-    if !checkMp3Decision(decision) {
-        return errors.New("invalid decision type")
+func DoItemDecision(targetItem string,decision Mp3SpecialDir) error {
+    if !isSpecialDir(decision) {
+        log.Error().Msgf("tried to use bad special dir: %s",decision)
+        return errors.New("invalid special dir type")
     }
 
-    return moveItemIntoDir(targetItem,string(decision))
+    var destination string=string(decision)
+
+    if isInSpecialDir(targetItem) {
+        destination="../"+destination
+    }
+
+    return moveItemIntoDir(targetItem,destination)
 }
 
 // move a target file into a dir relative to the file. create dir if it
-// doesnt exist
+// doesnt exist. if the dir is the same as the current dir, do nothing
 func moveItemIntoDir(target string,dirName string) error {
+    var result fs.FileInfo
     var e error
-    _,e=os.Stat(target)
+    result,e=os.Stat(target)
+
+    if e!=nil {
+        return e
+    }
+
+    // need to return result to check if actually found?
+    result.Name()
+
+    target,e=filepath.Abs(target)
 
     if e!=nil {
         return e
@@ -40,6 +52,17 @@ func moveItemIntoDir(target string,dirName string) error {
         filepath.Dir(target),
         dirName,
     )
+
+    targetDirLoc,e=filepath.Abs(targetDirLoc)
+
+    if e!=nil {
+        return e
+    }
+
+    if targetDirLoc==filepath.Dir(target) {
+        log.Info().Msg("not moving - same directory")
+        return nil
+    }
 
     e=os.MkdirAll(targetDirLoc,0755)
 
@@ -57,14 +80,4 @@ func moveItemIntoDir(target string,dirName string) error {
     }
 
     return nil
-}
-
-// returns true if the decision is valid
-func checkMp3Decision(decision Mp3Decision) bool {
-    switch decision {
-        case Mp3Decision_yes,Mp3Decision_no,Mp3Decision_maybe:
-            return true
-    }
-
-    return false
 }

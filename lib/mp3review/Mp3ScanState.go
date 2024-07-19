@@ -89,7 +89,7 @@ func (state *Mp3ScanState) AdvanceItem() Mp3ReviewStatus {
 // perform decision on the current item, if there is one, and advance to the next
 // item. returns new state. if there is no item, does nothing.
 // if failed to move item, does not advance
-func (state *Mp3ScanState) DecideItem(decision Mp3Decision) (Mp3ReviewStatus,error) {
+func (state *Mp3ScanState) DecideItem(decision Mp3SpecialDir) (Mp3ReviewStatus,error) {
     if state.NoMoreItems() {
         return state.GetStatus(),Mp3ScanStateError_noitems
     }
