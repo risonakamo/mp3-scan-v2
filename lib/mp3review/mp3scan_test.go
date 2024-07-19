@@ -34,13 +34,13 @@ func Test_shouldBeExcluded(t *testing.T) {
     for _,item = range targetItems {
         // shouldBeExcluded(item)
         fmt.Println(item)
-        fmt.Println("->",shouldBeExcluded(item))
+        fmt.Println("->",shouldBeExcluded(item,false))
         fmt.Println()
     }
 }
 
 func Test_findMp3s(t *testing.T) {
-    result:=FindMp3s("C:/Users/ktkm2/Desktop/song jobs/2024-06-20")
+    result:=FindMp3s("C:/Users/ktkm2/Desktop/song jobs/2024-06-20",false)
 
     pp.Println(result)
 }
