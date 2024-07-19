@@ -126,5 +126,5 @@ func main() {
 
 // request from frontend to decide on current item
 type ItemDecisionRequest struct {
-	Decision mp3review.Mp3Decision `json:"decision"`
+	Decision mp3review.Mp3SpecialDir `json:"decision"`
 }
