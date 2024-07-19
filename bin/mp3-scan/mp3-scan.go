@@ -15,7 +15,7 @@ func main() {
 	utils.ConfigureDefaultZeroLogger()
 
 	// --- config
-	var targetDir string="C:/Users/ktkm2/Desktop/song jobs/2024-06-20"
+	var targetDir string="C:/Users/ktkm2/Desktop/song jobs/doing"
 	var maybeMode bool=true
 	// --- end config
 
