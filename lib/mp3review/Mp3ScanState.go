@@ -52,7 +52,9 @@ func NewScanState(targetDir string,includeMaybes bool) Mp3ScanState {
     }
 }
 
-// get current status. returns weird looking one if no more items
+// get current status. returns weird looking one if no more items.
+// if the item is inside a special dir, the folder name includes the one above the
+// special dir
 func (state *Mp3ScanState) GetStatus() Mp3ReviewStatus {
     if state.NoMoreItems() {
         return Mp3ReviewStatus{
@@ -64,9 +66,19 @@ func (state *Mp3ScanState) GetStatus() Mp3ReviewStatus {
         }
     }
 
+    var itemFolderPath string=filepath.Dir(state.items[state.currentItemI])
+    var itemFolderSingle string=filepath.Base(itemFolderPath)
+
+    // if the item is in a special dir, find the parent of the item's parent, and
+    // add it to the item's parent path
+    if isSpecialDir(Mp3SpecialDir(itemFolderSingle)) {
+        var itemFolderFodler string=filepath.Base(filepath.Dir(itemFolderPath))
+        itemFolderSingle=filepath.Join(itemFolderFodler,itemFolderSingle)
+    }
+
     return Mp3ReviewStatus{
 		CurrentItem: filepath.Base(state.items[state.currentItemI]),
-		CurrentItemFolder: filepath.Base(filepath.Dir(state.items[state.currentItemI])),
+		CurrentItemFolder: itemFolderSingle,
 		TotalItems: len(state.items),
 		CurrentItemIndex: state.currentItemI,
         NoMoreItems: false,
