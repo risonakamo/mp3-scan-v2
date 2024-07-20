@@ -15,17 +15,21 @@ func main() {
 	utils.ConfigureDefaultZeroLogger()
 
 	// --- config
-	var targetDir string="C:/Users/ktkm2/Desktop/song jobs/doing"
-	var maybeMode bool=true
+	// none for now
 	// --- end config
 
 
-	// --- auto vars
+	// --- vars
 	var here string=utils.GetHereDirExe()
+	var configPath string=filepath.Join(here,"config/config.yml")
+	var config mp3review.Mp3ReviewConfig=mp3review.LoadMp3ReviewConfig(configPath)
 
 
 	// --- state initialise
-	var state mp3review.Mp3ScanState=mp3review.NewScanState(targetDir,maybeMode)
+	var state mp3review.Mp3ScanState=mp3review.NewScanState(
+		config.Mp3Dir,
+		config.IncludeMaybe,
+	)
 
 
 
